@@ -1,61 +1,49 @@
+<?php
+include 'koneksi.php';
+
+if (isset($_POST['submit'])) {
+    $nama = $_POST['nama_lengkap'];
+    $email = $_POST['email'];
+    $nomor_telepon = $_POST['nomor_telepon'];
+    $jenis_kelamin = $_POST['jenis_kelamin'];
+
+    $query = "INSERT INTO user (nama_lengkap, email, nomor_telepon, jenis_kelamin) VALUES ('$nama', '$email', '$nomor_telepon', '$jenis_kelamin')";
+    $result = mysqli_query($conn, $query);
+
+    if ($result) {
+        echo "Data berhasil ditambahkan!";
+        header("Location: index.php"); // Redirect ke halaman utama
+        exit();
+    } else {
+        die("Gagal menambahkan data: " . mysqli_error($conn));
+    }
+}
+?>
+
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Pengguna</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            text-align: center;
-        }
-        h2 {
-            margin-bottom: 20px;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px;
-            border: none;
-            width: 100%;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-    </style>
+    <title>Tambah Data</title>
 </head>
 <body>
-    <div class="container">
-        <h2>Tambah Pengguna</h2>
-        <form action="store.php" method="POST">
-        <input type="text" name="name" placeholder="ID" required>
-            <input type="text" name="name" placeholder="Nama Lengkap" required>
-            <input type="text" name="name" placeholder="Nomor Telp" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="text" name="name" placeholder="Password" required>
-            <button type="submit">Simpan</button>
-        </form>
-    </div>
+    <h2>Tambah Data User</h2>
+    <form method="POST">
+        <label>Nama Lengkap:</label>
+        <input type="text" name="nama_lengkap" required><br><br>
+
+        <label>Email:</label>
+        <input type="email" name="email" required><br><br>
+
+        <label>Nomor Telepon:</label>
+        <input type="text" name="nomor_telepon" required><br><br>
+
+        <label>Jenis Kelamin:</label>
+        <select name="jenis_kelamin" required>
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
+        </select><br><br>
+
+        <button type="submit" name="submit">Tambah Data</button>
+    </form>
 </body>
 </html>

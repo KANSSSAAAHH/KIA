@@ -1,43 +1,50 @@
 <?php
-include '../config/database.php';
-$id = $_GET['id'];
-$query = "SELECT * FROM users WHERE id='$id'";
-$result = $conn->query($query);
-$row = $result->fetch_assoc();
+include("koneksi.php");
+
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+
+    $id = intval($id);
+
+    $query = "SELECT * FROM user WHERE id = $id";
+    $result = mysqli_query($conn, $query);
+
+    if (!$result) {
+        die("Query gagal: " . mysqli_error($conn));
+    }
+
+    if (mysqli_num_rows($result) > 0) {
+        $data = mysqli_fetch_assoc($result);
+    } else {
+        echo "Data tidak ditemukan.";
+        exit();
+    }
+} else {
+    echo "ID tidak ditemukan di URL.";
+    exit();
+}
+
+if (isset($_POST['update'])) {
+    $nama_lengkap = $_POST['nama_lengkap'];
+    $email = $_POST['email'];
+    $nomor_telepon = $_POST['nomor_telepon'];
+    $jenis_kelamin = $_POST['jenis_kelamin'];
+
+    $updateQuery = "UPDATE user SET 
+                    nama_lengkap = '$nama_lengkap', 
+                    email = '$email', 
+                    nomor_telepon = '$nomor_telepon', 
+                    jenis_kelamin = '$jenis_kelamin' 
+                    WHERE id = $id";
+
+    $updateResult = mysqli_query($conn, $updateQuery);
+
+    if ($updateResult) {
+        echo "Data berhasil diperbarui!";
+        header("Location: index.php"); // Redirect ke halaman utama
+        exit();
+    } else {
+        die("Gagal memperbarui data: " . mysqli_error($conn));
+    }
+}
 ?>
-
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit User</title>
-    <link rel="stylesheet" href="../assets/styles.css">
-</head>
-<body>
-    <div class="container">
-        <h2>Edit User</h2>
-        <form action="../actions/update.php" method="POST">
-            <input type="hidden" name="id" value="<?= $row['id']; ?>">
-
-            <label>Nama:</label>
-            <input type="text" name="nama" value="<?= $row['nama']; ?>" required>
-
-            <label>Nomor Telepon:</label>
-            <input type="text" name="nomor_telepon" value="<?= $row['nomor_telepon']; ?>" required>
-
-            <label>Email:</label>
-            <input type="email" name="email" value="<?= $row['email']; ?>" required>
-
-            <label>Jenis Kelamin:</label>
-            <select name="jenis_kelamin">
-                <option value="Laki-laki" <?= ($row['jenis_kelamin'] == "Laki-laki") ? "selected" : ""; ?>>Laki-laki</option>
-                <option value="Perempuan" <?= ($row['jenis_kelamin'] == "Perempuan") ? "selected" : ""; ?>>Perempuan</option>
-            </select>
-
-            <button type="submit" class="btn btn-edit">Update</button>
-            <a href="index.php" class="btn">Kembali</a>
-        </form>
-    </div>
-</body>
-</html>

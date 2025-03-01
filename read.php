@@ -1,5 +1,5 @@
 <?php
-include 'config.php';
+include 'index.php';
 
 // Ambil data dari database
 $sql = "SELECT * FROM users";

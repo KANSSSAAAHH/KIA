@@ -1,12 +1,12 @@
 <?php
-include '../config/database.php';
+include 'koneksi.php';
+
 $id = $_GET['id'];
+$query = "DELETE FROM user WHERE id=$id";
 
-$query = "DELETE FROM users WHERE id='$id'";
-
-if ($conn->query($query) === TRUE) {
-    header("Location: ../views/index.php");
+if ($conn->query($query)) {
+    header("Location: index.php");
 } else {
-    echo "Error deleting record: " . $conn->error;
+    echo "Gagal menghapus data!";
 }
 ?>
