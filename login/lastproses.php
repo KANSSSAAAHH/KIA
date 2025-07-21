@@ -375,7 +375,7 @@
           <p>Kami akan menghubungi email Anda secepat mungkin untuk proses pengambilan KIA.</p>
         </div>
         <div class="btn-wrapper">
-          <form method="post" action="../Akhir/setelah.php">
+          <form method="post" action="../login/tampilan.php">
             <button type="submit" class="btn-ok">Selesai</button>
           </form>
         </div>

@@ -41,6 +41,7 @@
             margin: 0;
             display: flex;
             justify-content: flex-end;
+            align-items: center;
         }
         nav ul li {
             margin-left: 20px;
@@ -56,6 +57,17 @@
         nav ul li a:hover {
             background: rgba(255, 255, 255, 0.2);
         }
+
+        /* Tombol logout khusus */
+        .logout-btn {
+            background-color: red;
+            border-radius: 5px;
+        }
+
+        .logout-btn:hover {
+            background-color: darkred;
+        }
+
         .container {
             display: flex;
             margin: 30px;
@@ -108,9 +120,10 @@
         </div>
         <nav>
             <ul>
-                <li><a href="../Tengah/home.php">HOME</a></li>
+                <li><a href="../Tengah/persyaratan.php">HOME</a></li>
                 <li><a href="../Tengah/about.php">ABOUT</a></li>
                 <li><a href="../Tengah/contact.php">CONTACT</a></li>
+                <li><a href="../awal/kia.php" class="logout-btn">LOGOUT</a></li>
             </ul>
         </nav>
     </header>

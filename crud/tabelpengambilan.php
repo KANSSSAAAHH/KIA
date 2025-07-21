@@ -7,7 +7,7 @@ if ($conn->connect_error) {
 
 // Update data
 if (isset($_POST['update'])) {
-    $id = $_POST['id'];
+    $id_pengambilan = $_POST['id_pengambilan'];
     $pilihan_pengambilan = $_POST['pilihan_pengambilan'];
     $nama_kepala_keluarga = $_POST['nama_kepala_keluarga'];
     $nama_pemohon = $_POST['nama_pemohon'];
@@ -17,25 +17,25 @@ if (isset($_POST['update'])) {
     $kabupaten_kota = $_POST['kabupaten_kota'];
     $provinsi = $_POST['provinsi'];
 
-    $conn->query("UPDATE pengambilan SET 
-        pilihan_pengambilan='$pilihan_pengambilan',
-        nama_kepala_keluarga='$nama_kepala_keluarga',
-        nama_pemohon='$nama_pemohon',
-        email_pemohon='$email_pemohon',
-        desa_kelurahan='$desa_kelurahan',
-        kecamatan='$kecamatan',
-        kabupaten_kota='$kabupaten_kota',
-        provinsi='$provinsi'
-        WHERE id=$id
-    ");
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit;
+       $conn->query("UPDATE pengambilan SET 
+    pilihan_pengambilan='$pilihan_pengambilan',
+    nama_kepala_keluarga='$nama_kepala_keluarga',
+    nama_pemohon='$nama_pemohon',
+    email_pemohon='$email_pemohon',
+    desa_kelurahan='$desa_kelurahan',
+    kecamatan='$kecamatan',
+    kabupaten_kota='$kabupaten_kota',
+    provinsi='$provinsi'
+    WHERE id_pengambilan='$id_pengambilan'");
+
+header("Location: " . $_SERVER['PHP_SELF']);
+exit;
 }
 
 // Hapus data
 if (isset($_GET['hapus'])) {
-    $id = $_GET['hapus'];
-    $conn->query("DELETE FROM pengambilan WHERE id=$id");
+    $id_pengambilan = $_GET['hapus'];
+    $conn->query("DELETE FROM pengambilan WHERE id_pengambilan=$id_pengambilan");
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
@@ -43,8 +43,8 @@ if (isset($_GET['hapus'])) {
 // Ambil data untuk edit
 $edit_data = null;
 if (isset($_GET['edit'])) {
-    $id = $_GET['edit'];
-    $result = $conn->query("SELECT * FROM pengambilan WHERE id=$id");
+    $id_pengambilan = $_GET['edit'];
+    $result = $conn->query("SELECT * FROM pengambilan WHERE id_pengambilan=$id_pengambilan");
     $edit_data = $result->fetch_assoc();
 }
 ?>
@@ -134,7 +134,7 @@ if (isset($_GET['edit'])) {
     <h2>Edit Data Pengambilan</h2>
     <div class="form-container">
         <form method="POST">
-            <input type="hidden" name="id" value="<?= $edit_data['id'] ?>">
+            <input type="hidden" name="id_pengambilan" value="<?= $edit_data['id_pengambilan'] ?>">
 
             <label>Pilihan Pengambilan:</label>
             <input type="text" name="pilihan_pengambilan" required value="<?= $edit_data['pilihan_pengambilan'] ?>">
@@ -181,7 +181,7 @@ if (isset($_GET['edit'])) {
         </tr>
         <?php
         $no = 1;
-        $result = $conn->query("SELECT * FROM pengambilan ORDER BY id ASC");
+        $result = $conn->query("SELECT * FROM pengambilan ORDER BY id_pengambilan ASC");
         while ($row = $result->fetch_assoc()) {
             echo "<tr>
                 <td>{$no}</td>
@@ -194,8 +194,8 @@ if (isset($_GET['edit'])) {
                 <td>{$row['kabupaten_kota']}</td>
                 <td>{$row['provinsi']}</td>
                 <td>
-                    <a href='?edit={$row['id']}' class='btn edit-btn'>Edit</a>
-                    <a href='?hapus={$row['id']}' onclick=\"return confirm('Yakin hapus data ini?')\" class='btn delete-btn'>Delete</a>
+                    <a href='?edit={$row['id_pengambilan']}' class='btn edit-btn'>Edit</a>
+                    <a href='?hapus={$row['id_pengambilan']}' onclick=\"return confirm('Yakin hapus data ini?')\" class='btn delete-btn'>Delete</a>
                 </td>
             </tr>";
             $no++;

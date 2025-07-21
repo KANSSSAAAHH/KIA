@@ -114,8 +114,7 @@
 
             <h2>Mengisi Formulir</h2>
             <p>Setelah kita login kita akan diarahkan ke formulir pendaftaran KIA secara online dan harap mengisi dengan benar, jangan ada yang tidak diisi satu kolom pun.</p>
-            <img src="form1.png" alt="Formulir 1" height="200">
-            <img src="form2.png" alt="Formulir 2" height="146">
+            <img src="form.png" alt="Formulir 1" height="300">
         </main>
     </div>
 

@@ -67,24 +67,31 @@ if (isset($_GET['edit'])) {
             display: flex;
         }
         .sidebar {
-            width: 240px;
+            width: 250px;
             background-color: #2c3e50;
             color: white;
             height: 100vh;
-            padding: 20px;
+            padding: 25px;
             position: fixed;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         }
         .sidebar h2 {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #34495e;
         }
         .sidebar a {
             display: block;
             color: white;
-            padding: 10px 0;
+            padding: 12px 15px;
             text-decoration: none;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
         }
         .sidebar a:hover {
             background-color: #34495e;
+            padding-left: 20px;
         }
         .dropdown {
             position: relative;
@@ -92,46 +99,87 @@ if (isset($_GET['edit'])) {
         .dropdown .dropdown-content {
             display: none;
             background-color: #34495e;
-            padding-left: 10px;
+            padding-left: 20px;
             margin-top: 5px;
+            border-radius: 5px;
+        }
+        .dropdown .dropdown-content a {
+            padding: 8px 15px;
+            margin-bottom: 3px;
         }
         .dropdown:hover .dropdown-content {
             display: block;
         }
+        .logout-btn {
+            background-color: #e74c3c !important;
+            color: white !important;
+            padding: 12px 15px !important;
+            margin-top: 30px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            background-color: #c0392b !important;
+            transform: translateY(-2px);
+        }
 
         .main {
-            margin-left: 260px;
-            padding: 20px;
-            width: calc(100% - 260px);
+            margin-left: 280px;
+            padding: 30px;
+            width: calc(100% - 320px);
+            min-height: 100vh;
         }
         table {
             width: 100%;
             background: white;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 25px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
+            padding: 15px 12px;
+            border: 1px solid #e0e0e0;
             text-align: left;
         }
         th {
             background: #2980b9;
             color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e3f2fd;
         }
         .btn {
-            padding: 5px 10px;
+            padding: 8px 15px;
             border-radius: 4px;
             border: none;
             cursor: pointer;
             color: white;
-            margin: 2px;
+            margin: 3px;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
         .btn.edit {
             background-color: #27ae60;
         }
+        .btn.edit:hover {
+            background-color: #219a52;
+            transform: translateY(-1px);
+        }
         .btn.delete {
             background-color: #e74c3c;
+        }
+        .btn.delete:hover {
+            background-color: #c0392b;
+            transform: translateY(-1px);
         }
         input[type="text"], textarea {
             width: 100%;
@@ -142,15 +190,16 @@ if (isset($_GET['edit'])) {
         }
         form {
             background: white;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 6px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-top: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .message {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 500;
         }
         .success {
             background-color: #d4edda;
@@ -173,12 +222,14 @@ if (isset($_GET['edit'])) {
                 <a href="tabelkontak.php">Tabel Kontak</a>
                 <a href="tabelpengambilan.php">Tabel Pengambilan</a>
                 <a href="tabelrating.php">Tabel Rating</a>
+                <a href="join.php">Info Penting</a>
             </div>
         </div>
+        <a href="../awal/kia.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
     </div>
 
     <div class="main">
-        <h1>Data Pendaftaran</h1>
+        <h1 style="color: #2c3e50; margin-bottom: 25px; font-size: 28px;">Data Pendaftaran</h1>
         <?php if (!empty($pesan)) : ?>
             <div class="message <?php echo strpos($pesan, 'berhasil') !== false ? 'success' : 'error'; ?>">
                 <?php echo $pesan; ?>

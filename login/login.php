@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($password === $data['password']) {
                 $_SESSION['user_id'] = $data['id_pendaftaran'];
                 $_SESSION['username'] = $data['username'];
-                $_SESSION['role'] = $data['role']; // Simpan peran user
+                $_SESSION['role'] = $data['role'];
                 // var_dump($_SESSION['role']);
                 // die();
 

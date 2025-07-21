@@ -22,6 +22,13 @@
             justify-content: space-between;
             align-items: center;
             color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .navbar-left {
@@ -53,6 +60,12 @@
         .navbar ul li a:hover {
             text-decoration: underline;
         }
+
+        /* Add padding to body to compensate for fixed navbar */
+        body {
+            padding-top: 70px;
+        }
+
         .hero {
             background: linear-gradient(to bottom, #c9a7f5, #92d3f5);
             color: white;
@@ -164,6 +177,29 @@
 
         .footer .footer-section ul li a:hover {
             text-decoration: underline;
+        }
+
+        /* Responsive navbar */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 15px;
+            }
+            
+            .navbar-left img {
+                width: 80px;
+            }
+            
+            .navbar ul li {
+                margin: 0 10px;
+            }
+            
+            .navbar ul li a {
+                font-size: 14px;
+            }
+            
+            body {
+                padding-top: 60px;
+            }
         }
     </style>
 </head>

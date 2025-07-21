@@ -10,6 +10,8 @@ if (!$conn) {
     die("Koneksi gagal: " . mysqli_connect_error());
 }
 
+session_start();
+
 // Cek apakah form telah dikirim
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mengambil data dari form dengan validasi
@@ -21,9 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $kecamatan = isset($_POST['kecamatan']) ? $_POST['kecamatan'] : '';
     $kabupaten_kota = isset($_POST['kabupaten_kota']) ? $_POST['kabupaten_kota'] : '';
     $provinsi = isset($_POST['provinsi']) ? $_POST['provinsi'] : '';
-
-    // Debug: Lihat data yang diterima (hapus setelah berhasil)
-    // echo "<script>console.log(" . json_encode($_POST) . ");</script>";
+    $user_id = $_SESSION['user_id'];
     
     // Validasi sederhana - hanya cek field utama
     if (!empty($pilihan_pengambilan) && !empty($nama_kepala_keluarga) && !empty($nama_pemohon)) {
@@ -35,12 +35,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $default_rating = $rating_row['id_rating'];
             
             $sql = "INSERT INTO pengambilan 
-                    (pilihan_pengambilan, nama_kepala_keluarga, nama_pemohon, email_pemohon, desa_kelurahan, kecamatan, kabupaten_kota, provinsi, id_rating) 
+                    (`pilihan_pengambilan`, `nama_kepala_keluarga`, `nama_pemohon`, `email_pemohon`, `desa_kelurahan`, `kecamatan`, `kabupaten_kota`, `provinsi`, `id_rating`, `id_user`) 
                     VALUES 
-                    (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, "ssssssssi", $pilihan_pengambilan, $nama_kepala_keluarga, $nama_pemohon, $email_pemohon, $desa_kelurahan, $kecamatan, $kabupaten_kota, $provinsi, $default_rating);
+            mysqli_stmt_bind_param($stmt, "ssssssssii", $pilihan_pengambilan, $nama_kepala_keluarga, $nama_pemohon, $email_pemohon, $desa_kelurahan, $kecamatan, $kabupaten_kota, $provinsi, $default_rating, $user_id);
             
             if (mysqli_stmt_execute($stmt)) {
                 echo "<script>

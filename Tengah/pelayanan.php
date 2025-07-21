@@ -179,12 +179,12 @@
                         <td>5</td>
                         <td>Jumat</td>
                         <td>Active</td>
-                        <td>08:00 - 15:00</td>
+                        <td>08:00 - 16:00</td>
                     </tr>
                     <tr>
                         <td>6</td>
                         <td>Sabtu</td>
-                        <td>Active</td>
+                        <td>Off</td>
                         <td>-</td>
                     </tr>
                     <tr>

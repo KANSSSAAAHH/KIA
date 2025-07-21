@@ -1,4 +1,7 @@
 <?php
+// Mulai session (jika nanti kamu pakai login)
+session_start();
+
 // Koneksi ke database
 $host = "localhost";
 $user = "root";
@@ -10,10 +13,8 @@ if (!$conn) {
     die("Koneksi gagal: " . mysqli_connect_error());
 }
 
-// Cek apakah form telah dikirim
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-print_r($_POST); echo "<br>"; print_r($_FILES);
-    // Ambil semua input
+    // Ambil input dari form
     $nik = $_POST['nik'];
     $nama_lengkap = $_POST['nama_lengkap'];
     $jenis_kelamin = $_POST['jenis_kelamin'];
@@ -34,48 +35,55 @@ print_r($_POST); echo "<br>"; print_r($_FILES);
     $tanggal_pendaftaran = $_POST['tanggal_pendaftaran'];
     $nama_kepala_keluarga = $_POST['nama_kepala_keluarga'];
 
-    // Proses upload file
+    // Direktori upload
     $uploadDir = "../uploads/";
-    $file_kk = $_FILES['file_kk']['name'];
-    $ktp_ayah = $_FILES['ktp_ayah']['name'];
-    $ktp_ibu = $_FILES['ktp_ibu']['name'];
-    $pas_foto = $_FILES['pas_foto']['name'];
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
 
-    $uploadOK = true;
-
-    // // Fungsi upload dan validasi
-    function uploadFile($fileInputName, $uploadDir) {
-        $fileName = basename($_FILES[$fileInputName]['name']);
-        $targetFile = $uploadDir . $fileName;
-        if (move_uploaded_file($_FILES[$fileInputName]['tmp_name'], $targetFile)) {
-            return $fileName;
+    // Fungsi upload file
+    function uploadFile($inputName, $uploadDir) {
+        if (isset($_FILES[$inputName]) && $_FILES[$inputName]['error'] === 0) {
+            $fileName = time() . "_" . basename($_FILES[$inputName]['name']);
+            $targetPath = $uploadDir . $fileName;
+            if (move_uploaded_file($_FILES[$inputName]['tmp_name'], $targetPath)) {
+                return $fileName;
+            }
         }
         return null;
     }
 
+    // Upload semua file
     $uploaded_kk = uploadFile('file_kk', $uploadDir);
     $uploaded_ktp_ayah = uploadFile('ktp_ayah', $uploadDir);
     $uploaded_ktp_ibu = uploadFile('ktp_ibu', $uploadDir);
     $uploaded_pas_foto_anak = uploadFile('pas_foto', $uploadDir);
 
-    // if ($uploaded_kk && $uploaded_ayah && $uploaded_ibu && $uploaded_foto) {
-        $sql = "INSERT INTO pengguna 
-        (nik, nama_lengkap, jenis_kelamin, golongan_darah, tempat_lahir, tanggal_lahir, no_kk, no_akta_kelahiran, agama, kewarganegaraan, alamat, pendidikan, nama_ayah, nama_ibu, kebangsaan, hubungan_keluarga, cacat_menurut_jenis, tanggal_pendaftaran, nama_kepala_keluarga, file_kk, file_ktp_ayah, file_ktp_ibu, pas_foto_anak) 
-        VALUES 
-        ('$nik', '$nama_lengkap', '$jenis_kelamin', '$golongan_darah', '$tempat_lahir', '$tanggal_lahir', '$no_kk', '$no_akta_kelahiran', '$agama', '$kewarganegaraan', '$alamat', '$pendidikan', '$nama_ayah', '$nama_ibu', '$kebangsaan', '$hubungan_keluarga', '$cacat_menurut_jenis', '$tanggal_pendaftaran', '$nama_kepala_keluarga', '$uploaded_kk', '$uploaded_ktp_ayah', '$uploaded_ktp_ibu', '$uploaded_pas_foto_anak')";
+    // Validasi upload
+    if (!$uploaded_kk || !$uploaded_ktp_ayah || !$uploaded_ktp_ibu || !$uploaded_pas_foto_anak) {
+        echo "❌ Gagal upload file. Pastikan semua file diisi.";
+        exit;
+    }
 
-        if (mysqli_query($conn, $sql)) {
-            echo "<script>alert('Pendaftaran berhasil!'); window.location.href = '../login/proses.php';</script>";
-        } else {
-            echo "Error: " . mysqli_error($conn);
- }
-    // } else {
-    //     echo "<script>alert('Upload file gagal! Pastikan semua file valid.');</script>";
-    // }
+    // ✅ FIX: Tetapkan id_pendaftaran dan id_pengambilan yang SUDAH ADA di database
+    $id_pendaftaran = 13;  // Ganti sesuai yang ada di tabel `pendaftaran`
+    $id_pengambilan = 6;   // Ganti sesuai yang ada di tabel `pengambilan`
+
+    // Insert data ke tabel pengguna
+    $sql = "INSERT INTO pengguna 
+    (nik, nama_lengkap, jenis_kelamin, golongan_darah, tempat_lahir, tanggal_lahir, no_kk, no_akta_kelahiran, agama, kewarganegaraan, alamat, pendidikan, nama_ayah, nama_ibu, kebangsaan, hubungan_keluarga, cacat_menurut_jenis, tanggal_pendaftaran, nama_kepala_keluarga, file_kk, file_ktp_ayah, file_ktp_ibu, pas_foto_anak, id_pengambilan, id_pendaftaran) 
+    VALUES 
+    ('$nik', '$nama_lengkap', '$jenis_kelamin', '$golongan_darah', '$tempat_lahir', '$tanggal_lahir', '$no_kk', '$no_akta_kelahiran', '$agama', '$kewarganegaraan', '$alamat', '$pendidikan', '$nama_ayah', '$nama_ibu', '$kebangsaan', '$hubungan_keluarga', '$cacat_menurut_jenis', '$tanggal_pendaftaran', '$nama_kepala_keluarga', '$uploaded_kk', '$uploaded_ktp_ayah', '$uploaded_ktp_ibu', '$uploaded_pas_foto_anak', $id_pengambilan, $id_pendaftaran)";
+
+    if (mysqli_query($conn, $sql)) {
+        echo "<script>alert('✅ Pendaftaran berhasil!'); window.location.href = '../login/proses.php';</script>";
+    } else {
+        echo "❌ Gagal menyimpan data: " . mysqli_error($conn);
+    }
 }
+
 mysqli_close($conn);
 ?>
-
 
 
 <!DOCTYPE html>
@@ -105,7 +113,7 @@ mysqli_close($conn);
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
         }
-  .header {
+        .header {
             background-color:rgb(34, 29, 141);
             color: white;
             padding: 15px;
@@ -141,7 +149,7 @@ mysqli_close($conn);
         .submit-btn {
             text-align: right;
         }
- button {
+        button {
             background-color:rgb(37, 22, 167);
             color: white;
             padding: 10px 20px;
@@ -180,7 +188,7 @@ mysqli_close($conn);
                             <option value="Laki-laki">Laki-laki</option>
                             <option value="Perempuan">Perempuan</option>
                         </select>
-</div>
+                    </div>
                 </div>
 
                 <div class="row row-4">
@@ -218,12 +226,12 @@ mysqli_close($conn);
                 <div class="row row-3">
                     <div>
                         <label for="agama">Agama</label>
- <input type="text" name="agama" id="agama" required>
+                        <input type="text" name="agama" id="agama" required>
                     </div>
                     <div>
                         <label for="kewarganegaraan">Kewarganegaraan</label>
                         <select name="kewarganegaraan" id="kewarganegaraan" required>
-                        <option value="">-- Pilih --</option>
+                            <option value="">-- Pilih --</option>
                             <option value="WNI">WNI</option>
                             <option value="WNA">WNA</option>
                         </select>
@@ -246,7 +254,7 @@ mysqli_close($conn);
                     <div>
                         <label for="hubungan_keluarga">Hubungan Keluarga</label>
                         <select name="hubungan_keluarga" id="hubungan_keluarga" required>
-                        <option value="">-- Pilih --</option>
+                            <option value="">-- Pilih --</option>
                             <option value="Anak">Anak</option>
                             <option value="Orang tua">Orang tua</option>
                             <option value="Wali">Wali</option>
@@ -256,7 +264,7 @@ mysqli_close($conn);
                 </div>
 
                 <div class="row row-2">
-<div>
+                    <div>
                         <label for="nama_ayah">Nama Ayah</label>
                         <input type="text" name="nama_ayah" id="nama_ayah" required>
                     </div>
@@ -291,26 +299,26 @@ mysqli_close($conn);
                 </div>
 
                 <div class="row row-2">
-    <div>
- <label for="file_kk">Upload File KK</label>
-        <input type="file" name="file_kk" id="file_kk" required>
-    </div>
-    <div>
-        <label for="ktp_ayah">Upload KTP Ayah</label>
-        <input type="file" name="ktp_ayah" id="ktp_ayah" required>
-    </div>
-</div>
+                    <div>
+                        <label for="file_kk">Upload File KK</label>
+                        <input type="file" name="file_kk" id="file_kk" required>
+                    </div>
+                    <div>
+                        <label for="ktp_ayah">Upload KTP Ayah</label>
+                        <input type="file" name="ktp_ayah" id="ktp_ayah" required>
+                    </div>
+                </div>
 
-<div class="row row-2">
-    <div>
-        <label for="ktp_ibu">Upload KTP Ibu</label>
-        <input type="file" name="ktp_ibu" id="ktp_ibu" required>
-    </div>
-    <div>
-        <label for="pas_foto">Upload Pas Foto Anak (4x6)</label>
-        <input type="file" name="pas_foto" id="pas_foto" required>
-    </div>
-</div>
+                <div class="row row-2">
+                    <div>
+                        <label for="ktp_ibu">Upload KTP Ibu</label>
+                        <input type="file" name="ktp_ibu" id="ktp_ibu" required>
+                    </div>
+                    <div>
+                        <label for="pas_foto">Upload Pas Foto Anak (4x6)</label>
+                        <input type="file" name="pas_foto" id="pas_foto" required>
+                    </div>
+                </div>
 
                 <div class="submit-btn">
                     <button type="submit">Selesai</button>

@@ -1,145 +1,272 @@
 <?php
-$koneksi = mysqli_connect("localhost", "root", "", "ukl_2025");
-if (!$koneksi) {
-    die("Koneksi gagal: " . mysqli_connect_error());
+// Koneksi database
+session_start();
+$conn = new mysqli("localhost", "root", "", "ukl_2025");
+if ($conn->connect_error) {
+    die("Koneksi gagal: " . $conn->connect_error);
 }
 
-// Update Data
+// Update data
 if (isset($_POST['update'])) {
-    $id = intval($_POST['id']);
-    $fields = ['nik', 'nama_lengkap', 'jenis_kelamin', 'golongan_darah', 'tempat_lahir', 'tanggal_lahir', 'no_kk', 'no_akta_kelahiran', 'agama','kewarganegaraan','alamat', 'pendidikan', 'nama_ayah', 'nama_ibu', 'kebangsaan', 'hubungan_keluarga', 'cacat_menurut_jenis','tanggal_pendaftaran','nama_kepala_keluarga'];
-    $updates = [];
+    // var_dump($_POST); echo "<br>"; exit();
+    $id_user = $_GET['edit'];
+    $nik = $_POST['nik'];
+    $nama_lengkap = $_POST['nama_lengkap'];
+    $jenis_kelamin = $_POST['jenis_kelamin'];
+    $golongan_darah = $_POST['golongan_darah'];
+    $tempat_lahir = $_POST['tempat_lahir'];
+    $tanggal_lahir = $_POST['tanggal_lahir'];
+    $no_kk = $_POST['no_kk'];
+    $no_akta_kelahiran = $_POST['no_akta_kelahiran'];
+    $agama = $_POST['agama'];
+    $kewarganegaraan = $_POST['kewarganegaraan'];
+    $alamat = $_POST['alamat'];
+    $pendidikan = $_POST['pendidikan'];
+    $nama_ayah = $_POST['nama_ayah'];
+    $nama_ibu = $_POST['nama_ibu'];
+    $kebangsaan = $_POST['kebangsaan'];
+    $hubungan_keluarga = $_POST['hubungan_keluarga'];
+    $cacat_menurut_jenis = $_POST['cacat_menurut_jenis'];
+    $tanggal_pendaftaran = $_POST['tanggal_pendaftaran'];
+    $nama_kepala_keluarga = $_POST['nama_kepala_keluarga'];
+    $file_kk = $_POST['file_kk'];
+    $file_ktp_ayah = $_POST['file_ktp_ayah'];
+    $file_ktp_ibu = $_POST['file_ktp_ibu'];
+    $pas_foto_anak = $_POST['pas_foto_anak'];
+   
+    $conn->query("UPDATE pengguna SET 
+        nik='$nik',
+        nama_lengkap = '$nama_lengkap',
+        jenis_kelamin = '$jenis_kelamin',
+        golongan_darah = '$golongan_darah',
+        tempat_lahir = '$tempat_lahir',
+        tanggal_lahir = '$tanggal_lahir',
+        no_kk='$no_kk',
+        no_akta_kelahiran='$no_akta_kelahiran',
+        agama='$agama',
+        kewarganegaraan='$kewarganegaraan',
+        alamat='$alamat',
+        pendidikan='$pendidikan',
+        nama_ayah='$nama_ayah',
+        nama_ibu='$nama_ibu',
+        kebangsaan='$kebangsaan',
+        hubungan_keluarga='$hubungan_keluarga',
+        cacat_menurut_jenis='$cacat_menurut_jenis',
+        tanggal_pendaftaran='$tanggal_pendaftaran',
+        nama_kepala_keluarga='$nama_kepala_keluarga',
+        file_kk='$file_kk',
+        file_ktp_ayah='$file_ktp_ayah',
+        file_ktp_ibu='$file_ktp_ibu',
+        pas_foto_anak='$pas_foto_anak'
 
-    foreach ($fields as $f) {
-        $val = isset($_POST[$f]) ? mysqli_real_escape_string($koneksi, $_POST[$f]) : '';
-        $updates[] = "$f='$val'";
-    }
 
-    $sql = "UPDATE pengguna SET " . implode(", ", $updates) . " WHERE id=$id";
-    if ($koneksi->query($sql)) {
-        header("Location: pengguna.php");
-        exit();
-    } else {
-        echo "Gagal mengupdate data: " . $koneksi->error;
-    }
+        WHERE id_user=$id_user
+    ");
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
 }
 
-$data = $koneksi->query("SELECT * FROM pengguna");
+// Hapus data
+if (isset($_GET['hapus'])) {
+    $id = $_GET['hapus'];
+    $conn->query("DELETE FROM pengguna WHERE id_user=$id");
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
+}
 
+// Ambil data untuk edit
+$edit_data = null;
+if (isset($_GET['edit'])) {
+    $id = $_GET['edit'];
+    $result = $conn->query("SELECT * FROM pengguna WHERE id_user=$id");
+    $edit_data = $result->fetch_assoc();
+}
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Data Pengguna</title>
+    <title>Data Contact User</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial, sans-serif; margin: 30px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-        th { background-color: #f2f2f2; }
-        form { background: #f9f9f9; padding: 15px; margin-top: 20px; border-radius: 10px; }
-        input, select { padding: 5px; margin: 5px; width: 180px; }
-        button { padding: 6px 12px; margin-top: 10px; }
-        .edit-btn { background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 5px; }
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 40px; background: #ecf0f1; }
+        .form-container {
+            max-width: 600px; background: white; padding: 20px;
+            border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 30px;
+        }
+        table {
+            width: 100%; border-collapse: collapse; background: white;
+        }
+        table, th, td {
+            border: 1px solid #bdc3c7;
+        }
+        th {
+            background-color: #2980b9; color: white;
+        }
+        th, td {
+            padding: 10px; text-align: left;
+        }
+        .btn {
+            padding: 6px 12px; text-decoration: none; border-radius: 4px;
+            font-size: 14px; color: white; margin: 2px; display: inline-block;
+        }
+        .edit-btn { background-color: #27ae60; }
+        .delete-btn { background-color: #e74c3c; }
+        .back-btn { background-color: #34495e; }
     </style>
 </head>
 <body>
 
-<h2>Data Pengguna</h2>
+<?php if ($edit_data): ?>
+    <h2>Edit Data Pengguna</h2>
+    <div class="form-container">
+        <form method="POST">
+            <input type="hidden" name="id_user" value="<?= $edit_data['id_user'] ?>">
 
-<?php
-// Tampilkan form edit jika edit parameter ada
-if (isset($_GET['edit'])):
-    $id = intval($_GET['edit']);
-    $result = $koneksi->query("SELECT * FROM pengguna WHERE id=$id");
-    if ($result && $result->num_rows > 0):
-        $row = $result->fetch_assoc();
-?>
+             <label>NIK:</label>
+            <input type="text" name="nik" required value="<?= $edit_data['nik'] ?>"><br><br>
 
-<form method="post">
-    <input type="hidden" name="id" value="<?= $row['id'] ?>">
-    <input type="text" name="nik" placeholder="NIK" value="<?= $row['nik'] ?>" required>
-    <input type="text" name="nama_lengkap" placeholder="Nama Lengkap" value="<?= $row['nama_lengkap'] ?>" required>
-    <select name="jenis_kelamin" required>
-        <option value="">Pilih JK</option>
-        <option value="Laki-laki" <?= $row['jenis_kelamin'] == 'Laki-laki' ? 'selected' : '' ?>>Laki-laki</option>
-        <option value="Perempuan" <?= $row['jenis_kelamin'] == 'Perempuan' ? 'selected' : '' ?>>Perempuan</option>
-    </select>
-    <select name="golongan_darah">
-        <option value="">Gol Darah</option>
-        <?php foreach (['A', 'B', 'AB', 'O'] as $g): ?>
-            <option value="<?= $g ?>" <?= $row['golongan_darah'] == $g ? 'selected' : '' ?>><?= $g ?></option>
-        <?php endforeach; ?>
-    </select>
-    <input type="text" name="tempat_lahir" placeholder="Tempat Lahir" value="<?= $row['tempat_lahir'] ?>">
-    <input type="date" name="tanggal_lahir" value="<?= $row['tanggal_lahir'] ?>">
-    <input type="text" name="no_kk" placeholder="No KK" value="<?= $row['no_kk'] ?>">
-    <input type="text" name="no_akta_kelahiran" placeholder="No Akta" value="<?= $row['no_akta_kelahiran'] ?>">
-    <input type="text" name="agama" placeholder="Agama" value="<?= $row['agama'] ?>">
-    <input type="text" name="kewarganegaraan" placeholder="Kewarganegaraan" value="<?= $row['kewarganegaraan'] ?>">
-    <input type="text" name="alamat" placeholder="Alamat" value="<?= $row['alamat'] ?>">
-    <input type="text" name="pendidikan" placeholder="Pendidikan" value="<?= $row['pendidikan'] ?>">
-    <input type="text" name="nama_ayah" placeholder="Nama Ayah" value="<?= $row['nama_ayah'] ?>">
-    <input type="text" name="nama_ibu" placeholder="Nama Ibu" value="<?= $row['nama_ibu'] ?>">
-    <input type="text" name="kebangsaan" placeholder="Kebangsaan" value="<?= $row['kebangsaan'] ?>">
-    <input type="text" name="hubungan_keluarga" placeholder="Hubungan Keluarga" value="<?= $row['hubungan_keluarga'] ?>">
-    <input type="text" name="cacat_menurut_jenis" placeholder="Jenis Cacat" value="<?= $row['cacat_menurut_jenis'] ?>">
-    <input type="date" name="tanggal_pendaftaran" value="<?= $row['tanggal_pendaftaran'] ?>">
-    <input type="text" name="nama_kepala_keluarga" placeholder="Nama Kepala Keluarga" value="<?= $row['nama_kepala_keluarga'] ?>">
-    <br>
-    <button type="submit" name="update">Simpan</button>
-</form>
-<?php endif; endif; ?>
+            <label>Nama Lengkap:</label>
+            <input type="text" name="nama_lengkap" required value="<?= $edit_data['nama_lengkap'] ?>"><br><br>
 
+            <label>jenis_kelamin:</label>
+            <input type="jenis_kelamin" name="jenis_kelamin" required value="<?= $edit_data['jenis_kelamin'] ?>"><br><br>
+
+            <label>golongan_darah:</label>
+            <input type="text" name="golongan_darah" required value="<?= $edit_data['golongan_darah'] ?>"><br><br>
+
+          <label>tempat_lahir:</label>
+            <input type="text" name="tempat_lahir" required value="<?= $edit_data['tempat_lahir'] ?>"><br><br>
+
+            <label>tanggal_lahir:</label>
+            <input type="text" name="tanggal_lahir" required value="<?= $edit_data['tanggal_lahir'] ?>"><br><br>
+
+            <label>no_kk:</label>
+            <input type="text" name="no_kk" required value="<?= $edit_data['no_kk'] ?>"><br><br>
+
+            <label>no_akta_kelahiran:</label>
+            <input type="text" name="no_akta_kelahiran" required value="<?= $edit_data['no_akta_kelahiran'] ?>"><br><br>
+
+            <label>agama:</label>
+            <input type="text" name="agama" required value="<?= $edit_data['agama'] ?>"><br><br>
+
+            <label>kewarganegaraan:</label>
+            <input type="text" name="kewarganegaraan" required value="<?= $edit_data['kewarganegaraan'] ?>"><br><br>
+
+            <label>alamat:</label>
+            <input type="text" name="alamat" required value="<?= $edit_data['alamat'] ?>"><br><br>
+
+            <label>pendidikan:</label>
+            <input type="text" name="pendidikan" required value="<?= $edit_data['pendidikan'] ?>"><br><br>
+
+            <label>nama_ayah:</label>
+            <input type="text" name="nama_ayah" required value="<?= $edit_data['nama_ayah'] ?>"><br><br>
+
+            <label>nama_ibu:</label>
+            <input type="text" name="nama_ibu" required value="<?= $edit_data['nama_ibu'] ?>"><br><br>
+
+            <label>kebangsaan:</label>
+            <input type="text" name="kebangsaan" required value="<?= $edit_data['kebangsaan'] ?>"><br><br>
+
+            <label>hubungan_keluarga:</label>
+            <input type="text" name="hubungan_keluarga" required value="<?= $edit_data['hubungan_keluarga'] ?>"><br><br>
+
+            <label>cacat_menurut_jenis:</label>
+            <input type="text" name="cacat_menurut_jenis" required value="<?= $edit_data['cacat_menurut_jenis'] ?>"><br><br>
+
+            <label>tanggal_pendaftaran:</label>
+            <input type="text" name="tanggal_pendaftaran" required value="<?= $edit_data['tanggal_pendaftaran'] ?>"><br><br>
+            
+            <label>nama_kepala_keluarga:</label>
+            <input type="text" name="nama_kepala_keluarga" required value="<?= $edit_data['nama_kepala_keluarga'] ?>"><br><br>
+            
+            <label>file_kk:</label>
+            <input type="text" name="file_kk" required value="<?= $edit_data['file_kk'] ?>"><br><br>
+            
+            <label>file_ktp_ayah:</label>
+            <input type="text" name="file_ktp_ayah" required value="<?= $edit_data['file_ktp_ayah'] ?>"><br><br>
+            
+            <label>file_ktp_ibu:</label>
+            <input type="text" name="file_ktp_ibu" required value="<?= $edit_data['file_ktp_ibu'] ?>"><br><br>
+
+            <label>pas_foto_anak:</label>
+            <input type="text" name="pas_foto_anak" required value="<?= $edit_data['pas_foto_anak'] ?>"><br><br>
+
+            <button type="submit" class="submit-btn" name="update">Update</button>
+        </form>
+    </div>
+<?php endif; ?>
+
+<h2>Data Form User</h2>
 <table>
     <tr>
-        <th>No</th>
-        <th>NIK</th>
-        <th>Nama Lengkap</th>
-        <th>Jenis Kelamin</th>
-        <th>Golongan Darah</th>
-        <th>TTL</th>
-        <th>No KK</th>
-        <th>No Akta</th>
-        <th>Agama</th>
-        <th>Alamat</th>
-        <th>Pendidikan</th>
-        <th>Nama Ayah</th>
-        <th>Nama Ibu</th>
-        <th>Kebangsaan</th>
-        <th>Hubungan Keluarga</th>
-        <th>Cacat</th>
-        <th>Tgl Daftar</th>
-        <th>Nama KK</th>
-        <th>Aksi</th>
+    <th>nik</th>
+    <th>nama_lengkap</th>
+    <th>jenis_kelamin</th>
+    <th>golongan_darah</th>
+    <th>tempat_lahir</th>
+    <th>tanggal_lahir</th>
+    <th>no_kk</th>
+    <th>no_akta_kelahiran</th>
+    <th>agama</th>
+    <th>kewarganegaraan</th>
+    <th>alamat</th>
+    <th>pendidikan</th>
+    <th>nama_ayah</th>
+    <th>nama_ibu</th>
+    <th>kebangsaan</th>
+    <th>hubungan_keluarga</th>
+    <th>cacat_menurut_jenis</th>
+    <th>tanggal_pendaftaran</th>
+    <th>nama_kepala_keluarga</th>
+    <th>file_kk</th>
+    <th>file_ktp_ayah</th>
+    <th>file_ktp_ibu</th>
+    <th>pas_foto_anak</th>
+    <th>Aksi</th>
     </tr>
-    <?php $no = 1; while ($row = $data->fetch_assoc()): ?>
-    <tr>
-        <td><?= $no++ ?></td>
-        <td><?= $row['nik'] ?></td>
-        <td><?= $row['nama_lengkap'] ?></td>
-        <td><?= $row['jenis_kelamin'] ?></td>
-        <td><?= $row['golongan_darah'] ?></td>
-        <td><?= $row['tempat_lahir'] ?>, <?= $row['tanggal_lahir'] ?></td>
-        <td><?= $row['no_kk'] ?></td>
-        <td><?= $row['no_akta_kelahiran'] ?></td>
-        <td><?= $row['agama'] ?></td>
-        <td><?= $row['alamat'] ?></td>
-        <td><?= $row['pendidikan'] ?></td>
-        <td><?= $row['nama_ayah'] ?></td>
-        <td><?= $row['nama_ibu'] ?></td>
-        <td><?= $row['kebangsaan'] ?></td>
-        <td><?= $row['hubungan_keluarga'] ?></td>
-        <td><?= $row['cacat_menurut_jenis'] ?></td>
-        <td><?= $row['tanggal_pendaftaran'] ?></td>
-        <td><?= $row['nama_kepala_keluarga'] ?></td>
-        <td>
-        <a class="edit-btn" href="edit.php?edit=<?= $row['id_user'] ?>">Edit</a>
-
-    </td>
-    </tr>
-    <?php endwhile; ?>
+    <?php
+    $no = 1;
+    $result = $conn->query("SELECT * FROM pengguna ORDER BY id_user ASC");
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>
+            <td>{$row['nik']}</td>
+            <td>{$row['nama_lengkap']}</td>
+            <td>{$row['jenis_kelamin']}</td>
+            <td>{$row['golongan_darah']}</td>
+            <td>{$row['tempat_lahir']}</td>
+            <td>{$row['tanggal_lahir']}</td>
+            <td>{$row['no_kk']}</td>
+            <td>{$row['no_akta_kelahiran']}</td>
+            <td>{$row['agama']}</td>
+            <td>{$row['kewarganegaraan']}</td>
+            <td>{$row['alamat']}</td>
+            <td>{$row['pendidikan']}</td>
+            <td>{$row['nama_ayah']}</td>
+            <td>{$row['nama_ibu']}</td>
+            <td>{$row['kebangsaan']}</td>
+            <td>{$row['hubungan_keluarga']}</td>
+            <td>{$row['cacat_menurut_jenis']}</td>
+            <td>{$row['tanggal_pendaftaran']}</td>
+            <td>{$row['nama_kepala_keluarga']}</td>
+            <td><img src='../uploads/{$row['file_kk']}' alt='File KK' width='100'></td>
+            <td><img src='../uploads/{$row['file_ktp_ayah']}' alt='File KK' width='100'></td>
+            <td><img src='../uploads/{$row['file_ktp_ibu']}' alt='File KK' width='100'></td>
+            <td><img src='../uploads/{$row['pas_foto_anak']}' alt='File KK' width='100'></td>
+            <td>
+                <a href='?edit={$row['id_user']}' class='btn edit-btn'>Edit</a>
+                <a href='?hapus={$row['id_user']}' onclick=\"return confirm('Yakin hapus data ini?')\" class='btn delete-btn'>Delete</a>
+            </td>
+        </tr>";
+        $no++;
+    }
+    ?>
 </table>
+
+<br>
+<a href="../crud/index.php" class="btn back-btn">← Kembali</a>
 
 </body>
 </html>

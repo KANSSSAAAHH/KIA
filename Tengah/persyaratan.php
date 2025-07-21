@@ -33,8 +33,9 @@
             margin: 0;
         }
         nav {
-            background-color: #000;
-            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         nav ul {
             list-style: none;
@@ -58,6 +59,21 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 5px;
         }
+
+        /* Tombol Logout seperti halaman Contact Us */
+        .logout-btn {
+            background-color: red;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        .logout-btn:hover {
+            background-color: darkred;
+        }
+
         .container {
             display: flex;
             margin: 30px;
@@ -118,8 +134,10 @@
                 <li><a href="about.php">ABOUT</a></li>
                 <li><a href="contact.php">CONTACT</a></li>
             </ul>
+            <a href="../awal/kia.php" class="logout-btn">LOGOUT</a>
         </nav>
     </header>
+
     <div class="container">
         <aside>
             <ul>

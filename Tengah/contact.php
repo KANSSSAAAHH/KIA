@@ -7,17 +7,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $no_telp = mysqli_real_escape_string($conn, $_POST['no_telp']);
     $pesan   = mysqli_real_escape_string($conn, $_POST['pesan']);
 
-    // Cek apakah nilai sudah diterima
-    echo "Nama: $nama, Email: $email, No Telp: $no_telp, Pesan: $pesan <br>";
-
     $sql = "INSERT INTO keluhan (nama, email, no_telp, pesan) 
             VALUES ('$nama', '$email', '$no_telp', '$pesan')";
 
-if (mysqli_query($conn, $sql)) {
-    echo "<script>alert('Pesan berhasil dikirim!'); window.location.href='kia.php';</script>";
-} else {
-    echo "<script>alert('Gagal mengirim pesan: " . mysqli_error($conn) . "');</script>";
-}
+    if (mysqli_query($conn, $sql)) {
+        echo "<script>alert('Pesan berhasil dikirim!'); window.location.href='../awal/kia.php';</script>";
+        exit;
+    } else {
+        echo "<script>alert('Gagal mengirim pesan: " . mysqli_error($conn) . "');</script>";
+    }
 }
 ?>
 
@@ -65,11 +63,28 @@ if (mysqli_query($conn, $sql)) {
             font-weight: bold;
         }
 
-        .navbar .right a {
+        .navbar .right {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .right a,
+        .navbar .right .logout-btn {
             color: white;
             text-decoration: none;
-            margin: 0 15px;
+            margin: 0 10px;
             font-weight: 600;
+        }
+
+        .navbar .right .logout-btn {
+            background-color: red;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .navbar .right .logout-btn:hover {
+            background-color: darkred;
         }
 
         .container {
@@ -88,6 +103,7 @@ if (mysqli_query($conn, $sql)) {
             border-radius: 10px;
             max-width: 900px;
             width: 100%;
+            flex-wrap: wrap;
         }
 
         .contact-left, .contact-right {
@@ -103,7 +119,8 @@ if (mysqli_query($conn, $sql)) {
             margin-bottom: 10px;
         }
 
-        .contact-form input, .contact-form textarea {
+        .contact-form input,
+        .contact-form textarea {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
@@ -118,6 +135,7 @@ if (mysqli_query($conn, $sql)) {
             padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -129,9 +147,10 @@ if (mysqli_query($conn, $sql)) {
             <div class="logo">DUSCAKPIL JAWA TIMUR</div>
         </div>
         <div class="right">
-            <a href="../Tengah/home.php">HOME</a>
+            <a href="../Tengah/persyaratan.php">HOME</a>
             <a href="../Tengah/about.php">ABOUT</a>
             <a href="../Tengah/contact.php">CONTACT</a>
+            <a href="../awal/kia.php" class="logout-btn">LOGOUT</a>
         </div>
     </nav>
 
@@ -142,7 +161,7 @@ if (mysqli_query($conn, $sql)) {
                 <p>Kami siap membantu Anda dalam proses pembuatan Kartu Identitas Anak (KIA). Jika Anda memiliki pertanyaan, membutuhkan informasi lebih lanjut, atau mengalami kendala dalam pendaftaran, jangan ragu untuk menghubungi kami.</p>
                 <p>📞 +62 838 9260-6102</p>
                 <p>📧 Khanzadiyas123@gmail.com</p>
-                <p>📍 Jl. Taman puspa sari d-3 klurak candi</p>
+                <p>📍 Jl. Taman Puspa Sari D-3, Klurak Candi</p>
             </div>
             <div class="contact-right">
                 <form class="contact-form" method="POST" action="">
@@ -155,6 +174,6 @@ if (mysqli_query($conn, $sql)) {
             </div>
         </div>
     </div>
-
+    
 </body>
 </html>

@@ -52,6 +52,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if (mysqli_stmt_execute($stmt)) {
                     $last_id = mysqli_insert_id($koneksi);
                     $_SESSION['registration_success'] = "Registrasi berhasil! ID Anda: $last_id";
+                    date_default_timezone_set("Asia/Jakarta");
+                    $_SESSION['tanggal_pendaftaran'] = date("l, d F Y H:i:s");
                     
                     header("Location: login.php");
                     exit();

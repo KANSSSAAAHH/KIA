@@ -657,11 +657,11 @@
                 <div class="stat-label">Gratis</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">14</div>
+                <div class="stat-number">5</div>
                 <div class="stat-label">Hari Kerja</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">24/7</div>
+                <div class="stat-number">9/5</div>
                 <div class="stat-label">Online</div>
             </div>
             <div class="stat-card">
@@ -709,7 +709,7 @@
                 </div>
                 <div class="contact-item">
                     <strong>Website:</strong><br>
-                    www.dukcapil.kemendagri.go.id
+                    http://localhost/kia/Awal/kia.php
                 </div>
             </div>
         </div>
